@@ -3,3 +3,7 @@ CREATE TABLE Tubes(
     state varchar,
     associationID bigint,
     characteristic varchar);
+INSERT INTO tubes values (1,
+    'сложенная',
+    1,
+    'метрвая');
