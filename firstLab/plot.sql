@@ -1,29 +1,35 @@
-CREATE TABLE characteristics
-(
-    id    serial primary key,
-    value varchar unique
-);
-
 CREATE TABLE humans
 (
-    id      serial primary key,
-    name    varchar,
-    surname varchar
+    id   serial primary key,
+    name varchar
 );
 
 CREATE TABLE manipulators
 (
     id   serial primary key,
-    name varchar unique,
-    type varchar
+    name varchar unique
+);
+
+CREATE TABLE endings
+(
+    id             serial primary key,
+    name           varchar unique,
+    manipulator_ID bigint REFERENCES manipulators
 );
 
 CREATE TABLE states
 (
-    id                serial primary key,
-    value             varchar unique,
-    characteristic_ID bigint REFERENCES characteristics,
-    manipulator_ID    bigint REFERENCES manipulators
+    id             serial primary key,
+    name           varchar unique,
+    ending_ID      bigint REFERENCES endings,
+    manipulator_ID bigint REFERENCES manipulators
+);
+
+CREATE TABLE characteristics
+(
+    id       serial primary key,
+    value    varchar unique,
+    state_id bigint REFERENCES states
 );
 
 CREATE TABLE operator
@@ -33,26 +39,36 @@ CREATE TABLE operator
     PRIMARY KEY (humans_ID, manipulator_ID)
 );
 
-INSERT INTO characteristics (value)
-values ('метровая труба, заканчивающаяся башмаком, вроде тех, на которые приземляются межпланетные аппараты'),
-       ('раздвигается в несколько раз, похож на помело и непростой в обращении');
+INSERT INTO humans (name)
+values ('Letchik');
 
-INSERT INTO humans (name, surname)
-values ('Letchik', 'Pilotov');
+INSERT INTO manipulators (name)
+values ('1st');
 
-INSERT INTO manipulators (name, type)
-values ('MP0432', 'универсальный');
+INSERT INTO endings (name, manipulator_ID)
+values ('клшня', 1),
+       ('крюк', 1),
+       ('не указано', 1);
 
-INSERT INTO states (value, characteristic_id, manipulator_id)
-values ('сложенный', 1, 1),
-       ('разложенный', 2, 1);
+INSERT INTO states (name, ending_ID, manipulator_ID)
+values ('сложенный', 3, 1),
+       ('разложенный', 3, 1);
+
+INSERT INTO characteristics (value, state_id)
+values ('метровая труба', 1),
+       ('заканчивающаяся башмаком', 1),
+       ('вроде тех, на которые приземляются межпланетные аппараты', 1),
+       ('раздвигается в несколько раз', 2),
+       ('похож на помело', 2),
+       ('непростой в обращении', 2);
 
 INSERT INTO operator (humans_id, manipulator_id)
 values (1, 1);
 
-SELECT human.name, human.surname, manipulator.name, state.value, characteristic.value
+SELECT human.name, manipulator.name, state.name, characteristic.value
 FROM operator
          INNER JOIN manipulators manipulator on operator.manipulator_id = manipulator.id
          INNER JOIN humans human on operator.humans_id = human.id
          INNER JOIN states state on operator.manipulator_id = state.manipulator_id
-         INNER JOIN characteristics characteristic on state.characteristic_id = characteristic.id
+         INNER JOIN endings ending on state.ending_id = ending.id
+         INNER JOIN characteristics characteristic on characteristic.state_id = state.id;
