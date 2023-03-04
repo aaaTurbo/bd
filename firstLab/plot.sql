@@ -14,7 +14,8 @@ CREATE TABLE parts
 (
     id  serial primary key ,
     name varchar,
-    functional varchar
+    functional varchar,
+    manipulator_id bigint REFERENCES manipulators
 );
 
 CREATE TABLE endings
@@ -52,8 +53,8 @@ values ('Letchik');
 INSERT INTO manipulators (name)
 values ('1st');
 
-INSERT INTO parts (name, functional)
-values ('кнопка', 'разложить манипулятор'), ('накопители импульса', 'управление');
+INSERT INTO parts (name, functional, manipulator_id)
+values ('кнопка', 'разложить манипулятор', 1), ('накопители импульса', 'управление', 1);
 
 INSERT INTO endings (name, manipulator_ID)
 values ('клшня', 1),
@@ -74,3 +75,11 @@ values ('метровая труба', 1),
 
 INSERT INTO operator (humans_id, manipulator_id)
 values (1, 1);
+
+SELECT human.name, manipulator.name, state.name, characteristic.value, ending.name
+FROM operator
+         INNER JOIN manipulators manipulator on operator.manipulator_id = manipulator.id
+         INNER JOIN humans human on operator.humans_id = human.id
+         INNER JOIN states state on operator.manipulator_id = state.manipulator_id
+         INNER JOIN characteristics characteristic on characteristic.state_id = state.id
+         LEFT JOIN endings ending on state.ending_id = ending.id
