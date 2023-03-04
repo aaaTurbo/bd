@@ -1,4 +1,4 @@
-CCREATE TABLE humans
+CREATE TABLE humans
 (
     id   serial primary key,
     name varchar
@@ -13,14 +13,8 @@ CREATE TABLE manipulators
 CREATE TABLE parts
 (
     id  serial primary key ,
-    name varchar
-);
-
-CREATE TABLE spare_parts
-(
-    part_id  bigint REFERENCES parts,
-    manipulator_id bigint REFERENCES manipulators,
-    primary key (part_id, manipulator_id)
+    name varchar,
+    functional varchar
 );
 
 CREATE TABLE endings
@@ -58,20 +52,17 @@ values ('Letchik');
 INSERT INTO manipulators (name)
 values ('1st');
 
-INSERT INTO parts (name)
-values ('кнопка'), ('накопители импульса');
-
-INSERT INTO spare_parts (part_id, manipulator_id)
-values (1, 1), (2, 1);
+INSERT INTO parts (name, functional)
+values ('кнопка', 'разложить манипулятор'), ('накопители импульса', 'управление');
 
 INSERT INTO endings (name, manipulator_ID)
 values ('клшня', 1),
        ('крюк', 1),
-       ('не указано', 1);
+       ('башмак', 1);
 
 INSERT INTO states (name, ending_ID, manipulator_ID)
 values ('сложенный', 3, 1),
-       ('разложенный', 3, 1);
+       ('разложенный', null, 1);
 
 INSERT INTO characteristics (value, state_id)
 values ('метровая труба', 1),
