@@ -4,7 +4,7 @@ CREATE TABLE characteristics (
 );
 
 CREATE TABLE humans (
-                        id     bigint primary key,
+                        id     serial primary key,
                         name  varchar,
                         surname varchar,
                         characteristic_ID bigint REFERENCES characteristics
@@ -34,8 +34,8 @@ INSERT INTO characteristics (id, value) values
                             (2, 'метровая труба, заканчивающаяся башмаком, вроде тех, на которые приземляются межпланетные аппараты'),
                             (3, 'раздвигается в несколько раз, похож на помело и непростой в обращении');
                             
-INSERT INTO humans (id, name, surname, characteristic_id)  values
-                   (1, 'Letchik', 'Pilotov', 1);
+INSERT INTO humans (name, surname, characteristic_id)  values
+                   ('Letchik', 'Pilotov', 1);
                    
 INSERT INTO manipulators (id, name, type)  values
                          (1, 'MP0432', 'универсальный');
