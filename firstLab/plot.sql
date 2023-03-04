@@ -1,4 +1,4 @@
-CREATE TABLE humans
+CCREATE TABLE humans
 (
     id   serial primary key,
     name varchar
@@ -8,6 +8,19 @@ CREATE TABLE manipulators
 (
     id   serial primary key,
     name varchar unique
+);
+
+CREATE TABLE parts
+(
+    id  serial primary key ,
+    name varchar
+);
+
+CREATE TABLE spare_parts
+(
+    part_id  bigint REFERENCES parts,
+    manipulator_id bigint REFERENCES manipulators,
+    primary key (part_id, manipulator_id)
 );
 
 CREATE TABLE endings
@@ -45,6 +58,12 @@ values ('Letchik');
 INSERT INTO manipulators (name)
 values ('1st');
 
+INSERT INTO parts (name)
+values ('кнопка'), ('накопители импульса');
+
+INSERT INTO spare_parts (part_id, manipulator_id)
+values (1, 1), (2, 1);
+
 INSERT INTO endings (name, manipulator_ID)
 values ('клшня', 1),
        ('крюк', 1),
@@ -64,11 +83,3 @@ values ('метровая труба', 1),
 
 INSERT INTO operator (humans_id, manipulator_id)
 values (1, 1);
-
-SELECT human.name, manipulator.name, state.name, characteristic.value
-FROM operator
-         INNER JOIN manipulators manipulator on operator.manipulator_id = manipulator.id
-         INNER JOIN humans human on operator.humans_id = human.id
-         INNER JOIN states state on operator.manipulator_id = state.manipulator_id
-         INNER JOIN endings ending on state.ending_id = ending.id
-         INNER JOIN characteristics characteristic on characteristic.state_id = state.id;
