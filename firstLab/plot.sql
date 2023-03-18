@@ -18,19 +18,18 @@ CREATE TABLE parts
     manipulator_id bigint REFERENCES manipulators
 );
 
-CREATE TABLE endings
+CREATE TABLE states
 (
     id             serial primary key,
     name           varchar unique,
     manipulator_ID bigint REFERENCES manipulators
 );
 
-CREATE TABLE states
+CREATE TABLE endings
 (
     id             serial primary key,
-    name           varchar unique,
-    ending_ID      bigint REFERENCES endings,
-    manipulator_ID bigint REFERENCES manipulators
+    name           varchar,
+    state_ID bigint REFERENCES states
 );
 
 CREATE TABLE characteristics
@@ -56,14 +55,15 @@ values ('1st');
 INSERT INTO parts (name, functional, manipulator_id)
 values ('кнопка', 'разложить манипулятор', 1), ('накопители импульса', 'управление', 1);
 
-INSERT INTO endings (name, manipulator_ID)
-values ('клшня', 1),
-       ('крюк', 1),
-       ('башмак', 1);
+INSERT INTO states (name, manipulator_ID)
+values ('сложенный', 1),
+       ('разложенный', 1);
 
-INSERT INTO states (name, ending_ID, manipulator_ID)
-values ('сложенный', 3, 1),
-       ('разложенный', null, 1);
+INSERT INTO endings (name, state_ID)
+values ('клешня', 2),
+       ('крюк', 2),
+       ('башмак', 2),
+       ('башмак', 1);
 
 INSERT INTO characteristics (value, state_id)
 values ('метровая труба', 1),
@@ -82,4 +82,4 @@ FROM operator
          INNER JOIN humans human on operator.humans_id = human.id
          INNER JOIN states state on operator.manipulator_id = state.manipulator_id
          INNER JOIN characteristics characteristic on characteristic.state_id = state.id
-         LEFT JOIN endings ending on state.ending_id = ending.id
+         LEFT JOIN endings ending on state.id = ending.state_ID
