@@ -7,7 +7,8 @@ CREATE TABLE humans
 CREATE TABLE manipulators
 (
     id   serial primary key,
-    name varchar unique
+    name varchar unique,
+    human_id int REFERENCES humans
 );
 
 CREATE TABLE parts
@@ -15,42 +16,35 @@ CREATE TABLE parts
     id  serial primary key ,
     name varchar,
     functional varchar,
-    manipulator_id bigint REFERENCES manipulators
+    manipulator_id int REFERENCES manipulators
 );
 
 CREATE TABLE states
 (
     id             serial primary key,
     name           varchar unique,
-    manipulator_ID bigint REFERENCES manipulators
+    manipulator_ID int REFERENCES manipulators
 );
 
 CREATE TABLE endings
 (
     id             serial primary key,
     name           varchar,
-    state_ID bigint REFERENCES states
+    state_ID int REFERENCES states
 );
 
 CREATE TABLE characteristics
 (
     id       serial primary key,
     value    varchar unique,
-    state_id bigint REFERENCES states
-);
-
-CREATE TABLE operator
-(
-    humans_ID      INTEGER REFERENCES humans,
-    manipulator_ID INTEGER REFERENCES manipulators,
-    PRIMARY KEY (humans_ID, manipulator_ID)
+    state_id int REFERENCES states
 );
 
 INSERT INTO humans (name)
 values ('Letchik');
 
-INSERT INTO manipulators (name)
-values ('1st');
+INSERT INTO manipulators (name, human_id)
+values ('1st', 1);
 
 INSERT INTO parts (name, functional, manipulator_id)
 values ('кнопка', 'разложить манипулятор', 1), ('накопители импульса', 'управление', 1);
@@ -73,13 +67,9 @@ values ('метровая труба', 1),
        ('похож на помело', 2),
        ('непростой в обращении', 2);
 
-INSERT INTO operator (humans_id, manipulator_id)
-values (1, 1);
-
-SELECT human.name, manipulator.name, state.name, characteristic.value, ending.name
-FROM operator
-         INNER JOIN manipulators manipulator on operator.manipulator_id = manipulator.id
-         INNER JOIN humans human on operator.humans_id = human.id
-         INNER JOIN states state on operator.manipulator_id = state.manipulator_id
+SELECT human.name, manipulators.name, state.name, characteristic.value, ending.name
+FROM manipulators
+         INNER JOIN humans human on manipulators.human_id = human.id
+         INNER JOIN states state on manipulators.id = state.manipulator_id
          INNER JOIN characteristics characteristic on characteristic.state_id = state.id
          LEFT JOIN endings ending on state.id = ending.state_ID
